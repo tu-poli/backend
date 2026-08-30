@@ -1,0 +1,24 @@
+services:
+  mariadb:
+    image: mariadb:11.4
+    container_name: tupoli_mariadb_dev
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-tupoli_root_secret}
+      MARIADB_DATABASE: ${DB_NAME:-tupoli_db}
+      MARIADB_USER: ${DB_USER:-tupoli_user}
+      MARIADB_PASSWORD: ${DB_PASSWORD:-tupoli_password}
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    volumes:
+      - mariadb_dev_data:/var/lib/mysql
+    networks:
+      - tupoli_dev_network
+
+volumes:
+  mariadb_dev_data:
+    driver: local
+
+networks:
+  tupoli_dev_network:
+    driver: bridge
