@@ -1,0 +1,27 @@
+backend/
+├── docs/                       # Documentación técnica, guías y especificaciones de la API
+├── prisma/                     # ORM Prisma y persistencia de datos (MariaDB)
+│   └── schema.prisma           # Esquema de modelos de base de datos y datasource
+├── scripts/                    # Scripts de automatización, despliegue (deploy) y utilidades
+├── src/                        # Código fuente de la aplicación NestJS (TypeScript)
+│   ├── common/                 # Elementos transversales reutilizables (guards, pipes, interceptores, filtros)
+│   ├── configs/                # Configuración de la app y validación de variables de entorno (sin scripts)
+│   ├── modules/                # Módulos funcionales de la aplicación (arquitectura modular)
+│   │   └── [modulo]/           # Módulo funcional específico
+│   │       ├── dto/            # Data Transfer Objects y validaciones (class-validator)
+│   │       ├── *.controller.ts # Controlador HTTP (rutas y documentación con Swagger)
+│   │       ├── *.service.ts    # Servicio con lógica de negocio e inyección de dependencias
+│   │       └── *.module.ts     # Declaración y encapsulación del módulo en NestJS
+│   ├── app.module.ts           # Módulo raíz que orquesta los submódulos de la aplicación
+│   └── main.ts                 # Punto de entrada (bootstrap, Swagger, Helmet, CORS, Pipes)
+├── test/                       # Pruebas automatizadas End-to-End (E2E) con Jest
+│   ├── app.e2e-spec.ts         # Pruebas de integración E2E
+│   └── jest-e2e.json           # Configuración de Jest para el entorno E2E
+├── .env.example                # Plantilla de variables de entorno requeridas
+├── .eslintrc.js                # Reglas de linting con ESLint para TypeScript
+├── .prettierrc                 # Reglas de formateo de código con Prettier
+├── docker-compose-dev.yaml     # Orquestación de servicios en desarrollo (MariaDB)
+├── Dockerfile                  # Definición del contenedor Docker para la API
+├── nest-cli.json               # Configuración del CLI de NestJS
+├── package.json                # Dependencias, scripts de ejecución (npm) y configuración de Jest
+└── tsconfig.json               # Configuración del compilador de TypeScript
