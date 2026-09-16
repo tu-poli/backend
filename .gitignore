@@ -49,3 +49,6 @@ coverage/
 .npm
 .eslintcache
 .turbo
+
+
+AGENTS.md
