@@ -12,3 +12,7 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+model Dummy {
+  id Int @id @default(autoincrement())
+}
