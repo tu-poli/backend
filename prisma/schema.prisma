@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,4 +8,172 @@ generator client {
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+// ============================================================
+// Usuarios y Permisos
+// ============================================================
+
+model Rol {
+  id_rol   Int      @id @default(autoincrement())
+  nombre   String   @db.VarChar(100)
+  usuarios Usuario[]
+
+  @@map("rol")
+}
+
+model Usuario {
+  id_usuario Int     @id @default(autoincrement())
+  tipo_doc   String  @db.VarChar(50)
+  num_doc    String  @db.VarChar(50)
+  nombre     String  @db.VarChar(255)
+  mail       String? @db.VarChar(255)
+  password   String? @db.VarChar(255)
+  id_rol     Int?
+
+  rol          Rol?          @relation(fields: [id_rol], references: [id_rol])
+  inscripciones Inscripcion[]
+  reservas_como_profesor Reserva[] @relation("ProfesorReserva")
+
+  @@unique([tipo_doc, num_doc], name: "uq_usuario_doc")
+  @@map("usuario")
+}
+
+// ============================================================
+// Espacios Físicos
+// ============================================================
+
+model EspacioFisico {
+  id_espacio  Int     @id @default(autoincrement())
+  nombre      String  @db.VarChar(255)
+  descripcion String? @db.VarChar(255)
+
+  reservas Reserva[]
+
+  @@map("espacio_fisico")
+}
+
+// ============================================================
+// Actividades
+// ============================================================
+
+model CategoriaActividad {
+  id_categoria Int        @id @default(autoincrement())
+  nombre       String     @db.VarChar(255)
+  actividades  Actividad[]
+
+  @@map("categoria_actividad")
+}
+
+model Actividad {
+  id_actividad Int     @id @default(autoincrement())
+  nombre       String  @db.VarChar(255)
+  descripcion  String? @db.VarChar(255)
+  id_categoria Int?
+
+  categoria     CategoriaActividad? @relation(fields: [id_categoria], references: [id_categoria])
+  reservas      Reserva[]
+  inscripciones Inscripcion[]
+
+  @@map("actividad")
+}
+
+model EstadoReserva {
+  id_estado_reserva Int       @id @default(autoincrement())
+  nombre            String    @db.VarChar(100)
+  reservas          Reserva[]
+
+  @@map("estado_reserva")
+}
+
+model Reserva {
+  id_reserva        Int      @id @default(autoincrement())
+  id_actividad      Int?
+  id_espacio        Int?
+  id_profesor       Int?
+  fecha_hora_inicio DateTime
+  fecha_hora_fin    DateTime
+  cupo_maximo       Int?
+  id_estado_reserva Int?
+
+  actividad     Actividad?     @relation(fields: [id_actividad], references: [id_actividad])
+  espacio       EspacioFisico? @relation(fields: [id_espacio], references: [id_espacio])
+  profesor      Usuario?       @relation("ProfesorReserva", fields: [id_profesor], references: [id_usuario])
+  estado        EstadoReserva? @relation(fields: [id_estado_reserva], references: [id_estado_reserva])
+  reserva_items ReservaItem[]
+
+  @@map("reserva")
+}
+
+// ============================================================
+// Inscripciones
+// ============================================================
+
+model EstadoInscripcion {
+  id_estado_inscripcion Int           @id @default(autoincrement())
+  nombre                String        @db.VarChar(100)
+  inscripciones         Inscripcion[]
+
+  @@map("estado_inscripcion")
+}
+
+model Inscripcion {
+  id_inscripcion         Int      @id @default(autoincrement())
+  id_usuario             Int
+  id_actividad           Int
+  fecha_hora_inscripcion DateTime
+  id_estado_inscripcion  Int?
+
+  usuario   Usuario           @relation(fields: [id_usuario], references: [id_usuario])
+  actividad Actividad         @relation(fields: [id_actividad], references: [id_actividad])
+  estado    EstadoInscripcion? @relation(fields: [id_estado_inscripcion], references: [id_estado_inscripcion])
+
+  @@map("inscripcion")
+}
+
+// ============================================================
+// Inventario
+// ============================================================
+
+model CategoriaInventario {
+  id_categoria Int    @id @default(autoincrement())
+  nombre       String @db.VarChar(255)
+  items        Item[]
+
+  @@map("categoria_inventario")
+}
+
+model Inventario {
+  id_inventario Int     @id @default(autoincrement())
+  nombre        String  @db.VarChar(255)
+  descripcion   String? @db.VarChar(255)
+  items         Item[]
+
+  @@map("inventario")
+}
+
+model Item {
+  id_item       Int  @id @default(autoincrement())
+  nombre        String @db.VarChar(255)
+  cantidad      Int    @default(0)
+  id_categoria  Int?
+  id_inventario Int?
+
+  categoria     CategoriaInventario? @relation(fields: [id_categoria], references: [id_categoria])
+  inventario    Inventario?          @relation(fields: [id_inventario], references: [id_inventario])
+  reserva_items ReservaItem[]
+
+  @@map("item")
+}
+
+model ReservaItem {
+  id_reserva Int
+  id_item    Int
+  cantidad   Int @default(1)
+
+  reserva Reserva @relation(fields: [id_reserva], references: [id_reserva])
+  item    Item    @relation(fields: [id_item], references: [id_item])
+
+  @@id([id_reserva, id_item])
+  @@map("reserva_item")
 }

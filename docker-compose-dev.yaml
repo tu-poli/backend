@@ -12,6 +12,8 @@ services:
       - "${DB_PORT:-3306}:3306"
     volumes:
       - mysql_dev_data:/var/lib/mysql
+      # Scripts en este directorio se ejecutan automáticamente al crear el contenedor por primera vez
+      - ./docker/mysql-init:/docker-entrypoint-initdb.d:ro
     networks:
       - tupoli_dev_network
 
