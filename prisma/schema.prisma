@@ -9,6 +9,6 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql" // Maria DB
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }

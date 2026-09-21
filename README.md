@@ -1,6 +1,6 @@
 # Backend - TuPoli API
 
-API REST construida con NestJS, Prisma y MariaDB para la gestión del polideportivo TuPoli.
+API REST construida con NestJS, Prisma y MySQL para la gestión del polideportivo TuPoli.
 
 ---
 

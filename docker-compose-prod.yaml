@@ -1,39 +1,39 @@
 services:
-  mariadb:
-    image: mariadb:11.4
-    container_name: tupoli_mariadb_prod
+  mysql:
+    image: mysql:8.0
+    container_name: tupoli_mysql_prod
     restart: always
     environment:
-      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-      MARIADB_DATABASE: ${DB_NAME}
-      MARIADB_USER: ${DB_USER}
-      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
-      - mariadb_prod_data:/var/lib/mysql
+      - mysql_prod_data:/var/lib/mysql
     networks:
       - tupoli_prod_network
 
   api:
     build:
-      context: ./backend
+      context: .
       dockerfile: Dockerfile
     container_name: tupoli_api_prod
     restart: always
     environment:
       NODE_ENV: production
       PORT: ${PORT:-3000}
-      DATABASE_URL: mysql://${DB_USER}:${DB_PASSWORD}@mariadb:3306/${DB_NAME}
+      DATABASE_URL: mysql://${DB_USER}:${DB_PASSWORD}@mysql:3306/${DB_NAME}
       JWT_SECRET: ${JWT_SECRET}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-1d}
     ports:
       - "${PORT:-3000}:${PORT:-3000}"
     depends_on:
-      - mariadb
+      - mysql
     networks:
       - tupoli_prod_network
 
 volumes:
-  mariadb_prod_data:
+  mysql_prod_data:
     driver: local
 
 networks:
