@@ -4,6 +4,21 @@ API REST construida con NestJS, Prisma y MySQL para la gestión del polideportiv
 
 ---
 
+## 📖 Documentación de la API (Swagger)
+
+Toda la especificación e interacción con los endpoints del backend se encuentra documentada y centralizada a través de **Swagger UI**.
+
+- **URL Swagger UI:** [http://localhost:3000/api/v1/docs](http://localhost:3000/api/v1/docs)
+- **Prefijo Global de la API:** `/api/v1`
+
+> [!TIP]
+> Los desarrolladores de Frontend pueden ingresar directamente a Swagger UI para:
+> - Inspeccionar los endpoints disponibles agrupados por módulo.
+> - Ver los esquemas de Request (Body, Parámetros) y Response con sus tipos y validaciones.
+> - Ejecutar peticiones en tiempo real utilizando la opción **"Try it out"**.
+
+---
+
 ## 🚀 Requisitos Previos
 - [Node.js](https://nodejs.org/) v20+
 - [Docker](https://www.docker.com/) y Docker Compose
@@ -30,9 +45,17 @@ npm install
 npm run start:dev
 ```
 
-La API estará disponible en:
-- **API Base:** `http://localhost:3000/api`
-- **Swagger Docs:** `http://localhost:3000/api/docs`
+Una vez levantado el servidor:
+- **API Base:** `http://localhost:3000/api/v1`
+- **Swagger Docs:** `http://localhost:3000/api/v1/docs`
+
+---
+
+## 🧪 Pruebas Rápidas de API (Scripts)
+Se incluye un script para verificar el correcto funcionamiento del CRUD de categorías:
+```bash
+./scripts/test-categoria-item.sh
+```
 
 ---
 
@@ -45,4 +68,4 @@ docker compose -f docker-compose-prod.yaml up -d --build
 ---
 
 ## 📂 Guía de SCM y Convenciones
-Por favor revisa [SCM_BACKEND.md](../SCM_BACKEND.md) para conocer las pautas de commits, nombres de archivos y estructura.
+Por favor revisa [SCM_BACKEND.md](docs/SCM_BACKEND.md) para conocer las pautas de commits, nombres de archivos y estructura.

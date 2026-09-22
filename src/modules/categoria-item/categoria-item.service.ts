@@ -1,26 +1,47 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCategoriaItemDto } from './dto/create-categoria-item.dto';
 import { UpdateCategoriaItemDto } from './dto/update-categoria-item.dto';
+import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class CategoriaItemService {
-  create(createCategoriaItemDto: CreateCategoriaItemDto) {
-    return 'This action adds a new categoriaItem';
+  constructor(private readonly prisma: PrismaService) {}
+
+  // Crear una categoria, recive el DTO para validar sus datos
+  async create(createCategoriaItemDto: CreateCategoriaItemDto) {
+    return this.prisma.categoriaInventario.create({
+      data: createCategoriaItemDto,
+    });
   }
 
-  findAll() {
-    return `This action returns all categoriaItem`;
+  async findAll(nombre?: string) {
+    return this.prisma.categoriaInventario.findMany({
+      where: nombre ? { nombre: { contains: nombre } } : undefined,
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} categoriaItem`;
+  async findOne(id: number) {
+    const categoria = await this.prisma.categoriaInventario.findUnique({
+      where: { id_categoria: id },
+    });
+    if (!categoria) {
+      throw new NotFoundException(`Categoría con id ${id} no encontrada`);
+    }
+    return categoria;
   }
 
-  update(id: number, updateCategoriaItemDto: UpdateCategoriaItemDto) {
-    return `This action updates a #${id} categoriaItem`;
+  async update(id: number, updateCategoriaItemDto: UpdateCategoriaItemDto) {
+    await this.findOne(id); // Verifica si existe
+    return this.prisma.categoriaInventario.update({
+      where: { id_categoria: id },
+      data: updateCategoriaItemDto,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} categoriaItem`;
+  async remove(id: number) {
+    await this.findOne(id); // Verifica si existe
+    return this.prisma.categoriaInventario.delete({
+      where: { id_categoria: id },
+    });
   }
 }
