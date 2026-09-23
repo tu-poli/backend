@@ -27,21 +27,43 @@ Toda la especificación e interacción con los endpoints del backend se encuentr
 
 ## 🛠️ Puesta en marcha en Desarrollo
 
+> **Arquitectura local:** la base de datos corre en un contenedor Docker y la API NestJS se ejecuta directamente en tu máquina con `npm run start:dev`.
+
 ### 1. Variables de Entorno
-Copia el archivo de ejemplo en la raíz del proyecto o en esta carpeta:
+Copia el archivo de ejemplo y ajustá los valores si es necesario:
 ```bash
-cp ../.env.example ../.env
+cp .env.example .env
+```
+
+Asegurate de que `DATABASE_URL` apunte a `localhost` con el puerto mapeado del contenedor:
+```env
+DATABASE_URL="mysql://tupoli_user:tupoli_password@localhost:33306/tupoli_db"
 ```
 
 ### 2. Levantar la Base de Datos con Docker
-Desde la raíz del proyecto:
 ```bash
-docker compose -f docker-compose-dev.yaml up -d
+docker compose -f docker-compose-prod.yaml up -d
 ```
+> Esto levanta solo el contenedor de MySQL. La API **no** corre en Docker.
 
-### 3. Instalar dependencias y levantar API
+### 3. Instalar dependencias
 ```bash
 npm install
+```
+
+### 4. Aplicar migraciones (crear tablas)
+```bash
+npm run prisma:migrate:deploy
+```
+> Ejecuta las migraciones pendientes y crea todas las tablas en la base de datos.
+
+### 5. Cargar datos iniciales (seed)
+```bash
+npm run prisma:seed
+```
+
+### 6. Levantar la API
+```bash
 npm run start:dev
 ```
 
