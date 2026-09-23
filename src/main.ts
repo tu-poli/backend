@@ -26,8 +26,8 @@ async function iniciarAplicacion() {
   SwaggerModule.setup('api/v1/docs', app, document);
 
   const puerto = process.env.PORT || 3000;
-  await app.listen(puerto);
-  console.log(`Backend iniciado en: http://localhost:${puerto}`);
+  await app.listen(puerto, '0.0.0.0');
+  console.log(`Backend iniciado en: http://0.0.0.0:${puerto}`);
   console.log(`Swagger disponible en: http://localhost:${puerto}/api/v1/docs`);
 }
 

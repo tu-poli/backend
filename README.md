@@ -59,11 +59,49 @@ Se incluye un script para verificar el correcto funcionamiento del CRUD de categ
 
 ---
 
-## 📦 Producción con Docker Compose
-Para levantar todo el stack empaquetado (DB + API):
+## 📦 Levantar el stack para pruebas (Frontend ↔ API)
+
+Este es el flujo recomendado para que los devs de Frontend levanten la API junto a la base de datos usando Docker Compose, **evitando cache, código viejo y conflictos de contenedores**.
+
+### Pasos
+
+**1. Bajar todo lo que esté corriendo (limpieza completa):**
 ```bash
-docker compose -f docker-compose-prod.yaml up -d --build
+sudo docker compose -f docker-compose-prod.yaml down --volumes --remove-orphans
 ```
+> Esto elimina los contenedores, la red y el **volumen de MySQL** (datos incluidos). La próxima vez que levante, el seed corre desde cero.
+
+**2. Reconstruir la imagen y levantar:**
+```bash
+sudo docker compose -f docker-compose-prod.yaml up --build --force-recreate -d
+```
+
+| Flag | Qué hace |
+|---|---|
+| `--build` | Reconstruye la imagen del API desde el `Dockerfile` (sin usar cache de imagen anterior) |
+| `--force-recreate` | Recrea los contenedores aunque la config no haya cambiado |
+| `-d` | Corre en background |
+
+**3. Verificar que todo esté `Up`:**
+```bash
+sudo docker compose -f docker-compose-prod.yaml ps
+```
+
+**4. Ver los logs del API (opcional, para confirmar que el seed corrió):**
+```bash
+sudo docker logs tupoli_api
+```
+
+### URLs disponibles
+Una vez levantado:
+- **API Base:** `http://localhost:3000/api/v1`
+- **Swagger Docs:** `http://localhost:3000/api/v1/docs`
+
+### Bajar el stack al terminar
+```bash
+sudo docker compose -f docker-compose-prod.yaml down
+```
+> Sin `--volumes` conserva los datos de MySQL para la próxima sesión.
 
 ---
 
