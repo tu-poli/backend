@@ -5,6 +5,8 @@ import { PrismaModule } from './prisma/prisma.module';
 
 // Modulo de Inventario
 import { CategoriaItemModule } from './modules/categoria-item/categoria-item.module';
+// Modulo de Actividades
+import { CategoriaActividadModule } from './modules/categoria-actividad/categoria-actividad.module';
 
 @Module({
   imports: [
@@ -12,6 +14,7 @@ import { CategoriaItemModule } from './modules/categoria-item/categoria-item.mod
       isGlobal: true,
     }),
     CategoriaItemModule,
+    CategoriaActividadModule,
     // PrismaModule se activará una vez que tengamos los modelos listos en schema.prisma
     // y ejecutemos "npm run prisma:generate":
     // PrismaModule,
