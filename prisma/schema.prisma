@@ -16,8 +16,8 @@ datasource db {
 // ============================================================
 
 model Rol {
-  id_rol   Int      @id @default(autoincrement())
-  nombre   String   @db.VarChar(100)
+  id_rol   Int       @id @default(autoincrement())
+  nombre   String    @db.VarChar(100)
   usuarios Usuario[]
 
   @@map("rol")
@@ -32,9 +32,9 @@ model Usuario {
   password   String? @db.VarChar(255)
   id_rol     Int?
 
-  rol          Rol?          @relation(fields: [id_rol], references: [id_rol])
-  inscripciones Inscripcion[]
-  reservas_como_profesor Reserva[] @relation("ProfesorReserva")
+  rol                    Rol?          @relation(fields: [id_rol], references: [id_rol])
+  inscripciones          Inscripcion[]
+  reservas_como_profesor Reserva[]     @relation("ProfesorReserva")
 
   @@unique([tipo_doc, num_doc], name: "uq_usuario_doc")
   @@map("usuario")
@@ -59,8 +59,8 @@ model EspacioFisico {
 // ============================================================
 
 model CategoriaActividad {
-  id_categoria Int        @id @default(autoincrement())
-  nombre       String     @db.VarChar(255)
+  id_categoria Int         @id @default(autoincrement())
+  nombre       String      @db.VarChar(255)
   actividades  Actividad[]
 
   @@map("categoria_actividad")
@@ -125,8 +125,8 @@ model Inscripcion {
   fecha_hora_inscripcion DateTime
   id_estado_inscripcion  Int?
 
-  usuario   Usuario           @relation(fields: [id_usuario], references: [id_usuario])
-  actividad Actividad         @relation(fields: [id_actividad], references: [id_actividad])
+  usuario   Usuario            @relation(fields: [id_usuario], references: [id_usuario])
+  actividad Actividad          @relation(fields: [id_actividad], references: [id_actividad])
   estado    EstadoInscripcion? @relation(fields: [id_estado_inscripcion], references: [id_estado_inscripcion])
 
   @@map("inscripcion")
@@ -144,24 +144,13 @@ model CategoriaInventario {
   @@map("categoria_inventario")
 }
 
-model Inventario {
-  id_inventario Int     @id @default(autoincrement())
-  nombre        String  @db.VarChar(255)
-  descripcion   String? @db.VarChar(255)
-  items         Item[]
-
-  @@map("inventario")
-}
-
 model Item {
-  id_item       Int  @id @default(autoincrement())
-  nombre        String @db.VarChar(255)
-  cantidad      Int    @default(0)
-  id_categoria  Int?
-  id_inventario Int?
+  id_item      Int    @id @default(autoincrement())
+  nombre       String @db.VarChar(255)
+  cantidad     Int    @default(0)
+  id_categoria Int?
 
   categoria     CategoriaInventario? @relation(fields: [id_categoria], references: [id_categoria])
-  inventario    Inventario?          @relation(fields: [id_inventario], references: [id_inventario])
   reserva_items ReservaItem[]
 
   @@map("item")

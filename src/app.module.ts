@@ -3,9 +3,9 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { PrismaModule } from './prisma/prisma.module';
 
-// Modulo de Inventario
+// Modulo de Item
 import { CategoriaItemModule } from './modules/categoria-item/categoria-item.module';
-import { InventarioModule } from './modules/inventario/inventario.module';
+import { ItemModule } from './modules/item/item.module';
 // Modulo de Actividades
 import { CategoriaActividadModule } from './modules/categoria-actividad/categoria-actividad.module';
 
@@ -15,7 +15,7 @@ import { CategoriaActividadModule } from './modules/categoria-actividad/categori
       isGlobal: true,
     }),
     CategoriaItemModule,
-    InventarioModule,
+    ItemModule,
     CategoriaActividadModule,
     // PrismaModule se activará una vez que tengamos los modelos listos en schema.prisma
     // y ejecutemos "npm run prisma:generate":
