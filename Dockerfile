@@ -20,6 +20,8 @@ FROM node:20-alpine AS runner
 
 WORKDIR /app
 
+# Instalar dependencias necesarias para Prisma en Alpine
+RUN apk add --no-cache openssl libc6-compat
 ENV NODE_ENV=production
 
 COPY package*.json ./
@@ -32,5 +34,5 @@ COPY --from=builder /app/prisma ./prisma
 
 EXPOSE 3000
 
-# Aplica migraciones pendientes y luego arranca la app
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/main"]
+# Aplica migraciones pendientes, corre seeds (si RUN_SEEDS=true) y arranca la app
+CMD ["sh", "-c", "npx prisma migrate deploy && if [ \"$RUN_SEEDS\" = \"true\" ]; then node prisma/seeds.js; fi && node dist/main"]

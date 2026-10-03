@@ -4,8 +4,27 @@ API REST construida con **NestJS**, **Prisma** y **MySQL** para la gestión del 
 
 ---
 
+<<<<<<< HEAD
 ## Requisitos previos
 
+=======
+## 📖 Documentación de la API (Swagger)
+
+Toda la especificación e interacción con los endpoints del backend se encuentra documentada y centralizada a través de **Swagger UI**.
+
+- **URL Swagger UI:** [http://localhost:3000/api/v1/docs](http://localhost:3000/api/v1/docs)
+- **Prefijo Global de la API:** `/api/v1`
+
+> [!TIP]
+> Los desarrolladores de Frontend pueden ingresar directamente a Swagger UI para:
+> - Inspeccionar los endpoints disponibles agrupados por módulo.
+> - Ver los esquemas de Request (Body, Parámetros) y Response con sus tipos y validaciones.
+> - Ejecutar peticiones en tiempo real utilizando la opción **"Try it out"**.
+
+---
+
+## 🚀 Requisitos Previos
+>>>>>>> test
 - [Node.js](https://nodejs.org/) v20+
 - [Docker](https://www.docker.com/) y Docker Compose
 
@@ -15,82 +34,56 @@ API REST construida con **NestJS**, **Prisma** y **MySQL** para la gestión del 
 
 ### 1. Clonar y configurar variables de entorno
 
+> **Arquitectura local:** la base de datos corre en un contenedor Docker y la API NestJS se ejecuta directamente en tu máquina con `npm run start:dev`.
+
+### 1. Variables de Entorno
+Copia el archivo de ejemplo y ajustá los valores si es necesario:
 ```bash
 cp .env.example .env
 ```
 
-Editá el `.env` y completá los valores. Lo más importante es `DATABASE_URL`, que debe ser un valor **literal completo** (el archivo `.env` no expande variables):
-
+Asegurate de que `DATABASE_URL` apunte a `localhost` con el puerto mapeado del contenedor:
 ```env
-DATABASE_URL="mysql://tupoli_user:tupoli_password@localhost:3306/tupoli_db"
+DATABASE_URL="mysql://tupoli_user:tupoli_password@localhost:33306/tupoli_db"
 ```
 
-> Si cambiás el puerto de MySQL en `docker-compose-dev.yaml`, actualizá el puerto en `DATABASE_URL` también.
-
----
-
-### 2. Levantar la base de datos con Docker
-
+### 2. Levantar la Base de Datos con Docker
 ```bash
-docker compose -f docker-compose-dev.yaml up -d
+docker compose -f docker-compose-prod.yaml up -d
 ```
-
-Esto levanta un contenedor MySQL en el puerto definido en `.env` (`DB_PORT`, por defecto `3306`).
-Al crearse por primera vez, ejecuta automáticamente `docker/mysql-init/01-grants.sql` que otorga los permisos necesarios al usuario.
-
----
+> Esto levanta solo el contenedor de MySQL. La API **no** corre en Docker.
 
 ### 3. Instalar dependencias
-
 ```bash
 npm install
 ```
 
----
-
-### 4. Aplicar migraciones de base de datos
-
+### 4. Aplicar migraciones (crear tablas)
 ```bash
-npm run prisma:migrate
+npm run prisma:migrate:deploy
 ```
+> Ejecuta las migraciones pendientes y crea todas las tablas en la base de datos.
 
-Esto sincroniza las tablas de la DB con el schema definido en `prisma/schema.prisma`.
-Solo necesitás correrlo la primera vez o cuando el schema cambie.
-
----
-
-### 5. (Opcional) Cargar datos de prueba
-
+### 5. Cargar datos iniciales (seed)
 ```bash
 npm run prisma:seed
 ```
 
-Inserta datos iniciales: roles, espacios, actividades, usuarios de ejemplo, reservas e ítems de inventario.
-El seed es idempotente — puede ejecutarse múltiples veces sin errores.
-
----
-
-### 6. Iniciar la API
-
+### 6. Levantar la API
 ```bash
 npm run start:dev
 ```
 
-La API queda disponible con hot-reload en:
-
-| Recurso | URL |
-|---|---|
-| API base | `http://localhost:3000` |
-| Swagger docs | _(próximamente)_ |
+Una vez levantado el servidor:
+- **API Base:** `http://localhost:3000/api/v1`
+- **Swagger Docs:** `http://localhost:3000/api/v1/docs`
 
 ---
 
-## Producción con Docker Compose
-
-Levanta el stack completo (MySQL + API) en un solo comando:
-
+## 🧪 Pruebas Rápidas de API (Scripts)
+Se incluye un script para verificar el correcto funcionamiento del CRUD de categorías:
 ```bash
-docker compose -f docker-compose-prod.yaml up -d --build
+./scripts/test-categoria-item.sh
 ```
 
 Al arrancar, el contenedor de la API aplica automáticamente las migraciones pendientes (`prisma migrate deploy`) antes de iniciar NestJS. No es necesario correr nada manualmente.
@@ -99,40 +92,51 @@ Al arrancar, el contenedor de la API aplica automáticamente las migraciones pen
 
 ---
 
-## Scripts disponibles
+## 📦 Levantar el stack para pruebas (Frontend ↔ API)
 
-| Comando | Descripción |
+Este es el flujo recomendado para que los devs de Frontend levanten la API junto a la base de datos usando Docker Compose, **evitando cache, código viejo y conflictos de contenedores**.
+
+### Pasos
+
+**1. Bajar todo lo que esté corriendo (limpieza completa):**
+```bash
+sudo docker compose -f docker-compose-prod.yaml down --volumes --remove-orphans
+```
+> Esto elimina los contenedores, la red y el **volumen de MySQL** (datos incluidos). La próxima vez que levante, el seed corre desde cero.
+
+**2. Reconstruir la imagen y levantar:**
+```bash
+sudo docker compose -f docker-compose-prod.yaml up --build --force-recreate -d
+```
+
+| Flag | Qué hace |
 |---|---|
-| `npm run start:dev` | Inicia la API con hot-reload |
-| `npm run build` | Compila TypeScript a `dist/` |
-| `npm run start:prod` | Inicia la API desde `dist/` (sin hot-reload) |
-| `npm run prisma:migrate` | Genera y aplica migraciones (desarrollo) |
-| `npm run prisma:migrate:deploy` | Aplica migraciones existentes (producción/CI) |
-| `npm run prisma:seed` | Carga datos de prueba |
-| `npm run prisma:generate` | Regenera el cliente de Prisma |
-| `npm run prisma:studio` | Abre Prisma Studio (UI para la DB) |
-| `npm run lint` | Corre el linter |
-| `npm run test` | Corre los tests unitarios |
+| `--build` | Reconstruye la imagen del API desde el `Dockerfile` (sin usar cache de imagen anterior) |
+| `--force-recreate` | Recrea los contenedores aunque la config no haya cambiado |
+| `-d` | Corre en background |
+
+**3. Verificar que todo esté `Up`:**
+```bash
+sudo docker compose -f docker-compose-prod.yaml ps
+```
+
+**4. Ver los logs del API (opcional, para confirmar que el seed corrió):**
+```bash
+sudo docker logs tupoli_api
+```
+
+### URLs disponibles
+Una vez levantado:
+- **API Base:** `http://localhost:3000/api/v1`
+- **Swagger Docs:** `http://localhost:3000/api/v1/docs`
+
+### Bajar el stack al terminar
+```bash
+sudo docker compose -f docker-compose-prod.yaml down
+```
+> Sin `--volumes` conserva los datos de MySQL para la próxima sesión.
 
 ---
 
-## Estructura del proyecto
-
-```
-backend/
-├── docker/
-│   └── mysql-init/       # Scripts SQL que se ejecutan al crear el contenedor
-├── prisma/
-│   ├── schema.prisma     # Definición de modelos y conexión a la DB
-│   ├── migrations/       # Historial de migraciones generadas por Prisma
-│   └── seeds.js          # Script de datos iniciales
-├── src/
-│   ├── modules/          # Módulos de la aplicación (uno por entidad/feature)
-│   ├── prisma/           # Módulo y servicio compartido de Prisma
-│   ├── app.module.ts
-│   └── main.ts
-├── docker-compose-dev.yaml   # Solo DB (para desarrollo local)
-├── docker-compose-prod.yaml  # DB + API (para producción)
-├── Dockerfile
-└── .env.example
-```
+## 📂 Guía de SCM y Convenciones
+Por favor revisa [SCM_BACKEND.md](docs/SCM_BACKEND.md) para conocer las pautas de commits, nombres de archivos y estructura.

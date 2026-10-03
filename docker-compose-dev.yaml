@@ -1,7 +1,7 @@
 services:
   mysql:
     image: mysql:8.0
-    container_name: tupoli_db
+    container_name: ${DB_HOST:-tupoli_db}
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-tupoli_root_secret}
@@ -9,7 +9,7 @@ services:
       MYSQL_USER: ${DB_USER:-tupoli_user}
       MYSQL_PASSWORD: ${DB_PASSWORD:-tupoli_password}
     ports:
-      - "${DB_PORT:-3306}:3306"
+      - "${DB_PORT:-33306}:3306"
     volumes:
       - mysql_dev_data:/var/lib/mysql
       # Scripts en este directorio se ejecutan automáticamente al crear el contenedor por primera vez

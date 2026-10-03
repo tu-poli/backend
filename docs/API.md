@@ -17,7 +17,7 @@
 | :--- | :--- | :--- |
 | `GET` | `/inventario/categorias` | Listar categorías (filtro opcional por nombre) |
 | `POST` | `/inventario/categorias` | Registrar una nueva categoría |
-| `PUT` | `/inventario/categorias/:id` | Actualizar nombre o descripción de una categoría |
+| `PUT` | `/inventario/categorias/:id` | Actualizar nombre de una categoría |
 | `DELETE` | `/inventario/categorias/:id` | Eliminar una categoría |
 
 ### Items de Inventario
@@ -80,8 +80,7 @@
   [
     {
       "id": 1,
-      "nombre": "Deportes",
-      "descripcion": "Elementos deportivos del polideportivo"
+      "nombre": "Deportes"
     }
   ]
   ```
@@ -90,16 +89,14 @@
 - **Body:**
   ```json
   {
-    "nombre": "Alimentos",
-    "descripcion": "Insumos para viandas y meriendas"
+    "nombre": "Alimentos"
   }
   ```
 - **Response (201 Created):**
   ```json
   {
     "id": 2,
-    "nombre": "Alimentos",
-    "descripcion": "Insumos para viandas y meriendas"
+    "nombre": "Alimentos"
   }
   ```
 
@@ -107,16 +104,14 @@
 - **Body:**
   ```json
   {
-    "nombre": "Deportes de Contacto",
-    "descripcion": "Material para boxeo, judo, etc."
+    "nombre": "Deportes de Contacto"
   }
   ```
 - **Response (200 OK):**
   ```json
   {
     "id": 1,
-    "nombre": "Deportes de Contacto",
-    "descripcion": "Material para boxeo, judo, etc."
+    "nombre": "Deportes de Contacto"
   }
   ```
 

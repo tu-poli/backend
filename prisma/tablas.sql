@@ -89,22 +89,13 @@ CREATE TABLE `categoria_inventario` (
     PRIMARY KEY (`id_categoria`)
 );
 
-CREATE TABLE `inventario` (
-    `id_inventario`  INT          NOT NULL AUTO_INCREMENT,
-    `nombre`         VARCHAR(255) NOT NULL,
-    `descripcion`    VARCHAR(255),
-    PRIMARY KEY (`id_inventario`)
-);
-
 CREATE TABLE `item` (
     `id_item`       INT NOT NULL AUTO_INCREMENT,
     `nombre`        VARCHAR(255) NOT NULL,
     `cantidad`      INT NOT NULL DEFAULT 0,
     `id_categoria`  INT,
-    `id_inventario` INT,
     PRIMARY KEY (`id_item`),
-    CONSTRAINT `fk_item_categoria`  FOREIGN KEY (`id_categoria`)  REFERENCES `categoria_inventario` (`id_categoria`),
-    CONSTRAINT `fk_item_inventario` FOREIGN KEY (`id_inventario`) REFERENCES `inventario` (`id_inventario`)
+    CONSTRAINT `fk_item_categoria`  FOREIGN KEY (`id_categoria`)  REFERENCES `categoria_inventario` (`id_categoria`)
 );
 
 CREATE TABLE `reserva_item` (

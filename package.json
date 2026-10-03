@@ -22,7 +22,8 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:seed": "node prisma/seeds.js",
-    "prisma:studio": "prisma studio"
+    "prisma:studio": "prisma studio",
+    "test:routes": "bash scripts/validar-rutas.sh"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
