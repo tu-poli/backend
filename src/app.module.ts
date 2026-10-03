@@ -1,13 +1,15 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { AppController } from './app.controller';
-import { PrismaModule } from './prisma/prisma.module';
+import { Module } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
+import { AppController } from "./app.controller";
+import { PrismaModule } from "./prisma/prisma.module";
 
 // Modulo de Item
-import { CategoriaItemModule } from './modules/categoria-item/categoria-item.module';
-import { ItemModule } from './modules/item/item.module';
+import { CategoriaItemModule } from "./modules/categoria-item/categoria-item.module";
+import { ItemModule } from "./modules/item/item.module";
 // Modulo de Actividades
-import { CategoriaActividadModule } from './modules/categoria-actividad/categoria-actividad.module';
+import { CategoriaActividadModule } from "./modules/categoria-actividad/categoria-actividad.module";
+// Modulo de Almacenamiento (Supabase Storage)
+import { AlmacenamientoModule } from "./modules/almacenamiento/almacenamiento.module";
 
 @Module({
   imports: [
@@ -17,12 +19,10 @@ import { CategoriaActividadModule } from './modules/categoria-actividad/categori
     CategoriaItemModule,
     ItemModule,
     CategoriaActividadModule,
-    // PrismaModule se activará una vez que tengamos los modelos listos en schema.prisma
-    // y ejecutemos "npm run prisma:generate":
-    // PrismaModule,
+    AlmacenamientoModule,
+    PrismaModule,
   ],
   controllers: [AppController],
   providers: [],
 })
 export class AppModule {}
-

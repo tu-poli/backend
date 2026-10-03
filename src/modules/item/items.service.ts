@@ -1,7 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
-import { CreateItemDto } from './dto/create-item.dto';
-import { UpdateItemDto } from './dto/update-item.dto';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.service";
+import { CreateItemDto } from "./dto/create-item.dto";
+import { UpdateItemDto } from "./dto/update-item.dto";
 
 @Injectable()
 export class ItemsService {
@@ -9,12 +9,14 @@ export class ItemsService {
 
   async create(createItemDto: CreateItemDto) {
     const { elemento, categoriaId, cantidad } = createItemDto;
-    
+
     const categoryExists = await this.prisma.categoriaInventario.findUnique({
       where: { id_categoria: categoriaId },
     });
     if (!categoryExists) {
-      throw new NotFoundException(`Categoria con id ${categoriaId} no encontrada`);
+      throw new NotFoundException(
+        `Categoria con id ${categoriaId} no encontrada`,
+      );
     }
 
     const newItem = await this.prisma.item.create({
@@ -39,7 +41,7 @@ export class ItemsService {
       },
     });
 
-    return items.map(item => this.mapToDtoWithCategory(item));
+    return items.map((item) => this.mapToDtoWithCategory(item));
   }
 
   async findOne(id: number) {
@@ -61,17 +63,22 @@ export class ItemsService {
     await this.findOne(id); // verifica si existe
 
     const data: any = {};
-    if (updateItemDto.elemento !== undefined) data.nombre = updateItemDto.elemento;
-    if (updateItemDto.categoriaId !== undefined) data.id_categoria = updateItemDto.categoriaId;
-    if (updateItemDto.cantidad !== undefined) data.cantidad = updateItemDto.cantidad;
+    if (updateItemDto.elemento !== undefined)
+      data.nombre = updateItemDto.elemento;
+    if (updateItemDto.categoriaId !== undefined)
+      data.id_categoria = updateItemDto.categoriaId;
+    if (updateItemDto.cantidad !== undefined)
+      data.cantidad = updateItemDto.cantidad;
 
     if (updateItemDto.categoriaId !== undefined) {
-       const categoryExists = await this.prisma.categoriaInventario.findUnique({
-         where: { id_categoria: updateItemDto.categoriaId },
-       });
-       if (!categoryExists) {
-         throw new NotFoundException(`Categoria con id ${updateItemDto.categoriaId} no encontrada`);
-       }
+      const categoryExists = await this.prisma.categoriaInventario.findUnique({
+        where: { id_categoria: updateItemDto.categoriaId },
+      });
+      if (!categoryExists) {
+        throw new NotFoundException(
+          `Categoria con id ${updateItemDto.categoriaId} no encontrada`,
+        );
+      }
     }
 
     const updatedItem = await this.prisma.item.update({
@@ -106,10 +113,12 @@ export class ItemsService {
       id: item.id_item,
       elemento: item.nombre,
       categoriaId: item.id_categoria,
-      categoria: item.categoria ? {
-        id: item.categoria.id_categoria,
-        nombre: item.categoria.nombre,
-      } : null,
+      categoria: item.categoria
+        ? {
+            id: item.categoria.id_categoria,
+            nombre: item.categoria.nombre,
+          }
+        : null,
       cantidad: item.cantidad,
     };
   }

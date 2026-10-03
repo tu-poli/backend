@@ -43,6 +43,23 @@
 | `POST` | `/usuarios` | Crear un nuevo usuario |
 | `PUT` | `/usuarios/:id` | Actualizar rol o email de un usuario |
 
+### Menores y Documentación Médica
+| MÉTODO | Ruta | Descripción |
+| :--- | :--- | :--- |
+| `GET` | `/menores` | Listar menores a cargo del tutor autenticado |
+| `POST` | `/menores` | Registrar un menor a cargo de un tutor |
+| `GET` | `/menores/:id` | Obtener detalle de un menor |
+| `POST` | `/menores/:id/documentacion` | Subir ficha médica o CUD (`multipart/form-data`) |
+| `GET` | `/menores/:id/documentacion/:tipo/url` | Obtener URL firmada temporal para ver/descargar documento |
+
+### Inscripciones y Autorizaciones
+| MÉTODO | Ruta | Descripción |
+| :--- | :--- | :--- |
+| `GET` | `/inscripciones/reserva/:idReserva` | Listar inscripciones de una reserva con estado de autorización |
+| `POST` | `/inscripciones` | Inscribir un menor a una reserva (con validación de autorización si la actividad lo requiere) |
+| `GET` | `/inscripciones/:id/autorizacion/url` | Obtener URL firmada temporal de la autorización del menor |
+| `DELETE` | `/inscripciones/:id` | Cancelar inscripción |
+
 ---
 
 ## Detalle de Endpoints y Ejemplos
@@ -311,7 +328,150 @@
 
 ---
 
-## 6. Convención de Errores y Códigos de Estado
+### 6. Menores y Documentación Médica
+
+#### `GET /menores`
+- **Headers:** `Authorization: Bearer <token>`
+- **Descripción:** Devuelve la lista de menores a cargo del tutor autenticado (o todos si el rol es `ADMIN`).
+- **Response (200 OK):**
+  ```json
+  [
+    {
+      "id_menor": 1,
+      "id_tutor": 5,
+      "nombre": "Lucas",
+      "apellido": "Gómez",
+      "tipo_doc": "DNI",
+      "num_doc": "55112233",
+      "fecha_nacimiento": "2015-05-12T00:00:00.000Z",
+      "tieneFichaMedica": true,
+      "tieneCud": false
+    }
+  ]
+  ```
+
+#### `POST /menores`
+- **Headers:** `Authorization: Bearer <token>`
+- **Body:**
+  ```json
+  {
+    "nombre": "Lucas",
+    "apellido": "Gómez",
+    "tipo_doc": "DNI",
+    "num_doc": "55112233",
+    "fecha_nacimiento": "2015-05-12"
+  }
+  ```
+- **Response (201 Created):**
+  ```json
+  {
+    "id_menor": 1,
+    "id_tutor": 5,
+    "nombre": "Lucas",
+    "apellido": "Gómez",
+    "tipo_doc": "DNI",
+    "num_doc": "55112233",
+    "fecha_nacimiento": "2015-05-12T00:00:00.000Z",
+    "ficha_medica_url": null,
+    "cud_url": null
+  }
+  ```
+
+#### `POST /menores/:id/documentacion`
+- **Headers:** `Authorization: Bearer <token>`, `Content-Type: multipart/form-data`
+- **Parámetros:**
+  - `id`: ID del menor
+- **Body (form-data):**
+  - `tipo`: `"ficha_medica"` o `"cud"`
+  - `archivo`: Archivo binario (PDF, PNG, JPEG, máx. 5MB)
+- **Seguridad:** El bucket de Supabase es privado. Se almacena la ruta relativa en MySQL y no una URL pública.
+- **Response (201 Created):**
+  ```json
+  {
+    "mensaje": "Documentación cargada exitosamente",
+    "tipo": "ficha_medica",
+    "ruta": "fichas/menor_1_a83f9c.pdf"
+  }
+  ```
+
+#### `GET /menores/:id/documentacion/:tipo/url`
+- **Headers:** `Authorization: Bearer <token>`
+- **Descripción:** Genera un enlace firmado temporal (Signed URL) para previsualizar o descargar el documento médico privado.
+- **Seguridad (Control de acceso / Prevención IDOR):** Solo accesible para el tutor a cargo del menor, directivos o rol médico/coordinador.
+- **Response (200 OK):**
+  ```json
+  {
+    "urlFirmada": "https://xwfjhrpwlzkespelyxwr.supabase.co/storage/v1/object/sign/documentacion_medica/fichas/menor_1_a83f9c.pdf?token=eyJhbGciOi...",
+    "expiraEnSegundos": 900
+  }
+  ```
+
+---
+
+### 7. Inscripciones y Autorizaciones (Actividades Extraordinarias)
+
+#### `POST /inscripciones`
+- **Headers:** `Authorization: Bearer <token>`
+- **Descripción:** Inscribe a un menor a una reserva horaria de una actividad.
+- **Regla de negocio:** Si la actividad asociada a la reserva tiene `requiere_autorizacion: true` (ej. Excursión), el payload debe incluir `autorizacion_url` (ruta del archivo en bucket de autorizaciones) o el menor debe tener autorización adjuntada.
+- **Body:**
+  ```json
+  {
+    "id_reserva": 3,
+    "id_menor": 1,
+    "autorizacion_url": "autorizaciones/reserva_3/menor_1_aut.pdf"
+  }
+  ```
+- **Response (201 Created):**
+  ```json
+  {
+    "id_inscripcion": 10,
+    "id_reserva": 3,
+    "id_menor": 1,
+    "autorizacion_url": "autorizaciones/reserva_3/menor_1_aut.pdf",
+    "fecha_hora_inscripcion": "2026-10-20T14:30:00.000Z",
+    "id_estado_inscripcion": 1
+  }
+  ```
+
+#### `GET /inscripciones/reserva/:idReserva`
+- **Headers:** `Authorization: Bearer <token>`
+- **Descripción:** Permite al profesor o coordinador visualizar todos los menores inscriptos a una reserva y el estado de sus autorizaciones y fichas médicas.
+- **Response (200 OK):**
+  ```json
+  [
+    {
+      "id_inscripcion": 10,
+      "id_menor": 1,
+      "nombre": "Lucas",
+      "apellido": "Gómez",
+      "tutor": {
+        "id": 5,
+        "nombre": "Carlos Gómez",
+        "telefono": "3511234567"
+      },
+      "requiereAutorizacion": true,
+      "autorizacionPresentada": true,
+      "fichaMedicaPresentada": true,
+      "estado": "CONFIRMADA"
+    }
+  ]
+  ```
+
+#### `GET /inscripciones/:id/autorizacion/url`
+- **Headers:** `Authorization: Bearer <token>`
+- **Descripción:** Genera una URL firmada temporal de la autorización para que el profesor o directivo pueda verificar la firma del tutor previo a la excursión.
+- **Response (200 OK):**
+  ```json
+  {
+    "urlFirmada": "https://xwfjhrpwlzkespelyxwr.supabase.co/storage/v1/object/sign/autorizaciones/reserva_3/menor_1_aut.pdf?token=eyJ...",
+    "expiraEnSegundos": 900
+  }
+  ```
+
+---
+
+## 8. Convención de Errores y Códigos de Estado
 
 Todos los endpoints siguen la estructura estándar de error provista por NestJS:
 

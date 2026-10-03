@@ -4,10 +4,6 @@ API REST construida con **NestJS**, **Prisma** y **MySQL** para la gestión del 
 
 ---
 
-<<<<<<< HEAD
-## Requisitos previos
-
-=======
 ## 📖 Documentación de la API (Swagger)
 
 Toda la especificación e interacción con los endpoints del backend se encuentra documentada y centralizada a través de **Swagger UI**.
@@ -24,7 +20,6 @@ Toda la especificación e interacción con los endpoints del backend se encuentr
 ---
 
 ## 🚀 Requisitos Previos
->>>>>>> test
 - [Node.js](https://nodejs.org/) v20+
 - [Docker](https://www.docker.com/) y Docker Compose
 
@@ -42,9 +37,15 @@ Copia el archivo de ejemplo y ajustá los valores si es necesario:
 cp .env.example .env
 ```
 
-Asegurate de que `DATABASE_URL` apunte a `localhost` con el puerto mapeado del contenedor:
+Asegurate de que `DATABASE_URL` apunte a `localhost` con el puerto mapeado del contenedor, y configurá las credenciales de Supabase Storage si vas a trabajar con carga de documentación médica y autorizaciones:
 ```env
 DATABASE_URL="mysql://tupoli_user:tupoli_password@localhost:33306/tupoli_db"
+
+# Supabase Storage (Manejo de documentos y autorizaciones de menores)
+SUPABASE_URL="https://<tu-proyecto>.supabase.co"
+SUPABASE_SECRET_KEY="<tu-secret-service-role-key>"
+SUPABASE_BUCKET_DOCUMENTACION_MEDICA="documentacion_medica"
+SUPABASE_BUCKET_AUTORIZACIONES="autorizaciones"
 ```
 
 ### 2. Levantar la Base de Datos con Docker

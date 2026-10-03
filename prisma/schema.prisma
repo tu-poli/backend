@@ -32,12 +32,34 @@ model Usuario {
   password   String? @db.VarChar(255)
   id_rol     Int?
 
-  rol                    Rol?          @relation(fields: [id_rol], references: [id_rol])
-  inscripciones          Inscripcion[]
-  reservas_como_profesor Reserva[]     @relation("ProfesorReserva")
+  rol                    Rol?      @relation(fields: [id_rol], references: [id_rol])
+  reservas_como_profesor Reserva[] @relation("ProfesorReserva")
+  menores_a_cargo        Menor[]   @relation("TutorMenores")
 
   @@unique([tipo_doc, num_doc], name: "uq_usuario_doc")
   @@map("usuario")
+}
+
+// ============================================================
+// Menores a Cargo de Tutores
+// ============================================================
+
+model Menor {
+  id_menor         Int           @id @default(autoincrement())
+  id_tutor         Int
+  nombre           String        @db.VarChar(255)
+  apellido         String        @db.VarChar(255)
+  tipo_doc         String        @db.VarChar(50)
+  num_doc          String        @db.VarChar(50)
+  fecha_nacimiento DateTime      @db.Date
+  ficha_medica_url String?       @db.VarChar(500)
+  cud_url          String?       @db.VarChar(500)
+
+  tutor            Usuario       @relation("TutorMenores", fields: [id_tutor], references: [id_usuario])
+  inscripciones    Inscripcion[]
+
+  @@unique([tipo_doc, num_doc], name: "uq_menor_doc")
+  @@map("menor")
 }
 
 // ============================================================
@@ -67,14 +89,14 @@ model CategoriaActividad {
 }
 
 model Actividad {
-  id_actividad Int     @id @default(autoincrement())
-  nombre       String  @db.VarChar(255)
-  descripcion  String? @db.VarChar(255)
-  id_categoria Int?
+  id_actividad          Int                 @id @default(autoincrement())
+  nombre                String              @db.VarChar(255)
+  descripcion           String?             @db.VarChar(255)
+  id_categoria          Int?
+  requiere_autorizacion Boolean             @default(false)
 
-  categoria     CategoriaActividad? @relation(fields: [id_categoria], references: [id_categoria])
-  reservas      Reserva[]
-  inscripciones Inscripcion[]
+  categoria             CategoriaActividad? @relation(fields: [id_categoria], references: [id_categoria])
+  reservas              Reserva[]
 
   @@map("actividad")
 }
@@ -102,12 +124,13 @@ model Reserva {
   profesor      Usuario?       @relation("ProfesorReserva", fields: [id_profesor], references: [id_usuario])
   estado        EstadoReserva? @relation(fields: [id_estado_reserva], references: [id_estado_reserva])
   reserva_items ReservaItem[]
+  inscripciones Inscripcion[]
 
   @@map("reserva")
 }
 
 // ============================================================
-// Inscripciones
+// Inscripciones (Menores inscritos en Reservas)
 // ============================================================
 
 model EstadoInscripcion {
@@ -119,16 +142,18 @@ model EstadoInscripcion {
 }
 
 model Inscripcion {
-  id_inscripcion         Int      @id @default(autoincrement())
-  id_usuario             Int
-  id_actividad           Int
-  fecha_hora_inscripcion DateTime
+  id_inscripcion         Int                @id @default(autoincrement())
+  id_reserva             Int
+  id_menor               Int
+  autorizacion_url       String?            @db.VarChar(500)
+  fecha_hora_inscripcion DateTime           @default(now())
   id_estado_inscripcion  Int?
 
-  usuario   Usuario            @relation(fields: [id_usuario], references: [id_usuario])
-  actividad Actividad          @relation(fields: [id_actividad], references: [id_actividad])
-  estado    EstadoInscripcion? @relation(fields: [id_estado_inscripcion], references: [id_estado_inscripcion])
+  reserva                Reserva            @relation(fields: [id_reserva], references: [id_reserva])
+  menor                  Menor              @relation(fields: [id_menor], references: [id_menor])
+  estado                 EstadoInscripcion? @relation(fields: [id_estado_inscripcion], references: [id_estado_inscripcion])
 
+  @@unique([id_reserva, id_menor], name: "uq_inscripcion_reserva_menor")
   @@map("inscripcion")
 }
 
