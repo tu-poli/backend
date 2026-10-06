@@ -8,6 +8,8 @@ import { CategoriaItemModule } from './modules/categoria-item/categoria-item.mod
 import { ItemModule } from './modules/item/item.module';
 // Modulo de Actividades
 import { CategoriaActividadModule } from './modules/categoria-actividad/categoria-actividad.module';
+// Modulo de Espacios Fisicos
+import { EspacioFisicoModule } from './modules/espacio-fisico/espacio-fisico.module';
 
 @Module({
   imports: [
@@ -17,6 +19,7 @@ import { CategoriaActividadModule } from './modules/categoria-actividad/categori
     CategoriaItemModule,
     ItemModule,
     CategoriaActividadModule,
+    EspacioFisicoModule,
     // PrismaModule se activará una vez que tengamos los modelos listos en schema.prisma
     // y ejecutemos "npm run prisma:generate":
     // PrismaModule,
