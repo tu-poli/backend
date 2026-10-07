@@ -147,9 +147,6 @@ if [ -n "$CAT_ACT_ID" ] && [ "$CAT_ACT_ID" != "null" ]; then
   # 2.5 Actualizar (PATCH)
   run_test "PATCH" "/actividades/categorias/$CAT_ACT_ID" "200" "{\"nombre\":\"TestActividad Editada $TIMESTAMP\"}" "Actualizar categoría de actividad (PATCH)"
 
-  # 2.6 Probar ruta alias /categoria-actividad/:id
-  run_test "GET" "/categoria-actividad/$CAT_ACT_ID" "200" "" "Acceder a categoría vía alias /categoria-actividad/:id"
-
   # 2.7 Eliminar categoría
   run_test "DELETE" "/actividades/categorias/$CAT_ACT_ID" "200,204" "" "Eliminar categoría de actividad"
 
@@ -186,8 +183,8 @@ if [ -n "$CAT_ITEM_ID" ] && [ "$CAT_ITEM_ID" != "null" ]; then
   # 3.4 Obtener por ID
   run_test "GET" "/inventario/categorias/$CAT_ITEM_ID" "200" "" "Obtener categoría de inventario por ID"
 
-  # 3.5 Actualizar (PUT)
-  run_test "PUT" "/inventario/categorias/$CAT_ITEM_ID" "200" "{\"nombre\":\"TestItemCat Editada $TIMESTAMP\"}" "Actualizar categoría de inventario (PUT)"
+  # 3.5 Actualizar (PATCH)
+  run_test "PATCH" "/inventario/categorias/$CAT_ITEM_ID" "200" "{\"nombre\":\"TestItemCat Editada $TIMESTAMP\"}" "Actualizar categoría de inventario (PATCH)"
 else
   echo -e "  ${RED}✖ No se pudo crear la categoría de inventario necesaria para las pruebas siguientes${NC}"
 fi
@@ -223,8 +220,8 @@ if [ -n "$CAT_ITEM_ID" ] && [ "$CAT_ITEM_ID" != "null" ]; then
     # 4.5 Obtener ítem por ID
     run_test "GET" "/items/$ITEM_ID" "200" "" "Obtener ítem por ID"
 
-    # 4.6 Actualizar ítem (PUT)
-    run_test "PUT" "/items/$ITEM_ID" "200" "{\"elemento\":\"Pelota Test Editada\",\"categoriaId\":$CAT_ITEM_ID,\"cantidad\":15}" "Actualizar ítem (PUT)"
+    # 4.6 Actualizar ítem (PATCH)
+    run_test "PATCH" "/items/$ITEM_ID" "200" "{\"elemento\":\"Pelota Test Editada\",\"categoriaId\":$CAT_ITEM_ID,\"cantidad\":15}" "Actualizar ítem (PATCH)"
 
     # 4.7 Eliminar ítem
     run_test "DELETE" "/items/$ITEM_ID" "200,204" "" "Eliminar ítem por ID"
@@ -243,23 +240,92 @@ fi
 echo ""
 
 # ==============================================================================
-# SECCIÓN 5: Manejo de Errores y Validaciones DTO (Pruebas Negativas)
+# SECCIÓN 5: Rutas del Módulo Actividades
 # ==============================================================================
-echo -e "${BOLD}${YELLOW}[5/5] Validando Manejo de Errores y Validaciones (400 y 404)${NC}"
+echo -e "${BOLD}${YELLOW}[5/6] Validando Módulo Actividades${NC}"
 
-# 5.1 Enviar payload inválido a categoría actividad
+# Crear una categoría de actividad auxiliar si no existe
+AUX_CAT_ACT_NAME="CatAuxActividad $TIMESTAMP"
+run_test "POST" "/actividades/categorias" "201" "{\"nombre\":\"$AUX_CAT_ACT_NAME\"}" "Crear categoría auxiliar para actividad"
+
+AUX_CAT_ID=""
+if command -v jq >/dev/null 2>&1; then
+  AUX_CAT_ID=$(echo "$LAST_BODY" | jq -r '.id_categoria // empty')
+else
+  AUX_CAT_ID=$(echo "$LAST_BODY" | grep -o '"id_categoria":[0-9]*' | head -n1 | cut -d':' -f2)
+fi
+
+ACT_ID=""
+if [ -n "$AUX_CAT_ID" ] && [ "$AUX_CAT_ID" != "null" ]; then
+  # 5.1 Crear actividad asociada a categoría
+  run_test "POST" "/actividades" "201" "{\"nombre\":\"Taller Test $TIMESTAMP\",\"descripcion\":\"Taller deportivo\",\"categoriaId\":$AUX_CAT_ID,\"requiereAutorizacion\":true}" "Crear actividad vinculada a categoría"
+
+  if command -v jq >/dev/null 2>&1; then
+    ACT_ID=$(echo "$LAST_BODY" | jq -r '.id // empty')
+  else
+    ACT_ID=$(echo "$LAST_BODY" | grep -o '"id":[0-9]*' | head -n1 | cut -d':' -f2)
+  fi
+
+  # 5.2 Listar todas las actividades
+  run_test "GET" "/actividades" "200" "" "Listar todas las actividades"
+
+  # 5.3 Filtrar por nombre
+  run_test "GET" "/actividades?nombre=Taller" "200" "" "Filtrar actividades por query param 'nombre'"
+
+  # 5.4 Filtrar por categoriaId
+  run_test "GET" "/actividades?categoriaId=$AUX_CAT_ID" "200" "" "Filtrar actividades por query param 'categoriaId'"
+
+  # 5.5 Filtrar por requiereAutorizacion
+  run_test "GET" "/actividades?requiereAutorizacion=true" "200" "" "Filtrar actividades por query param 'requiereAutorizacion'"
+
+  if [ -n "$ACT_ID" ] && [ "$ACT_ID" != "null" ]; then
+    # 5.6 Obtener por ID
+    run_test "GET" "/actividades/$ACT_ID" "200" "" "Obtener actividad por ID"
+
+    # 5.7 Actualizar actividad (PATCH)
+    run_test "PATCH" "/actividades/$ACT_ID" "200" "{\"nombre\":\"Taller Test Actualizado\",\"descripcion\":\"Descripción modificada\",\"requiereAutorizacion\":false}" "Actualizar actividad (PATCH)"
+
+    # 5.8 Actualizar parcialmente (PATCH)
+    run_test "PATCH" "/actividades/$ACT_ID" "200" "{\"descripcion\":\"Descripción vía PATCH\"}" "Actualizar actividad parcialmente (PATCH)"
+
+    # 5.8.5 Probar duplicado exacto de nombre (409)
+    run_test "POST" "/actividades" "409" "{\"nombre\":\"Taller Test Actualizado\",\"categoriaId\":$AUX_CAT_ID}" "Validar 409 Conflicto por nombre duplicado de actividad"
+
+    # 5.9 Eliminar actividad
+    run_test "DELETE" "/actividades/$ACT_ID" "200,204" "" "Eliminar actividad por ID"
+
+    # 5.10 Verificar 404 tras eliminación
+    run_test "GET" "/actividades/$ACT_ID" "404" "" "Verificar 404 tras eliminar actividad"
+  fi
+
+  # Limpiar categoría auxiliar
+  run_test "DELETE" "/actividades/categorias/$AUX_CAT_ID" "200,204" "" "Limpieza: Eliminar categoría auxiliar de actividad"
+fi
+
+echo ""
+
+# ==============================================================================
+# SECCIÓN 6: Manejo de Errores y Validaciones DTO (Pruebas Negativas)
+# ==============================================================================
+echo -e "${BOLD}${YELLOW}[6/6] Validando Manejo de Errores y Validaciones (400 y 404)${NC}"
+
+# 6.1 Enviar payload inválido a categoría actividad
 run_test "POST" "/actividades/categorias" "400" "{}" "Validar rechazo por DTO vacío en categorías actividad"
 
-# 5.2 Enviar nombre con caracteres especiales no permitidos
+# 6.2 Enviar nombre con caracteres especiales no permitidos
 run_test "POST" "/actividades/categorias" "400" "{\"nombre\":\"Nombre@Invalido$$\"}" "Validar rechazo por regex en categorías actividad"
 
-# 5.3 Enviar payload inválido a items
+# 6.3 Enviar payload inválido a items
 run_test "POST" "/items" "400" "{\"elemento\":\"Incompleto\"}" "Validar rechazo por DTO incompleto en items"
 
-# 5.4 Consultar recurso inexistente (404)
+# 6.4 Enviar payload inválido a actividades (nombre vacío)
+run_test "POST" "/actividades" "400" "{}" "Validar rechazo por DTO vacío en actividades"
+
+# 6.5 Consultar recurso inexistente (404)
 run_test "GET" "/items/99999999" "404" "" "Validar 404 en ítem inexistente"
 run_test "GET" "/inventario/categorias/99999999" "404" "" "Validar 404 en categoría inventario inexistente"
 run_test "GET" "/actividades/categorias/99999999" "404" "" "Validar 404 en categoría actividad inexistente"
+run_test "GET" "/actividades/99999999" "404" "" "Validar 404 en actividad inexistente"
 
 echo ""
 

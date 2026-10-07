@@ -3,7 +3,7 @@ import {
   Get,
   Post,
   Body,
-  Put,
+  Patch,
   Param,
   Delete,
   Query,
@@ -56,7 +56,7 @@ export class ItemsController {
     return this.itemsService.findOne(+id);
   }
 
-  @Put(":id")
+  @Patch(":id")
   @ApiOperation({ summary: "Actualizar datos o cantidad de un ítem" })
   update(@Param("id") id: string, @Body() updateItemDto: UpdateItemDto) {
     return this.itemsService.update(+id, updateItemDto);

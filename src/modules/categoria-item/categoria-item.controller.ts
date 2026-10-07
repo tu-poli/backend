@@ -3,7 +3,7 @@ import {
   Get,
   Post,
   Body,
-  Put,
+  Patch,
   Param,
   Delete,
   Query,
@@ -47,7 +47,7 @@ export class CategoriaItemController {
     return this.categoriaItemService.findOne(+id);
   }
 
-  @Put(":id") // ACTUALIZAR UNA CATEGORIA
+  @Patch(":id") // ACTUALIZAR UNA CATEGORIA
   @ApiOperation({ summary: "Actualizar nombre de una categoría" })
   update(
     @Param("id") id: string,

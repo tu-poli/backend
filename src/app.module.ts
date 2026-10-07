@@ -7,11 +7,13 @@ import { PrismaModule } from "./prisma/prisma.module";
 import { CategoriaItemModule } from "./modules/categoria-item/categoria-item.module";
 import { ItemModule } from "./modules/item/item.module";
 // Modulo de Actividades
+import { CategoriaActividadModule } from "./modules/categoria-actividad/categoria-actividad.module";
+import { ActividadModule } from "./modules/actividad/actividad.module";
+// Modulo de Espacios Fisicos
+import { EspacioFisicoModule } from './modules/espacio-fisico/espacio-fisico.module';
 // Modulo de Almacenamiento (Supabase Storage)
 import { AlmacenamientoModule } from "./modules/almacenamiento/almacenamiento.module";
 import { CategoriaActividadModule } from './modules/categoria-actividad/categoria-actividad.module';
-// Modulo de Espacios Fisicos
-import { EspacioFisicoModule } from './modules/espacio-fisico/espacio-fisico.module';
 
 @Module({
   imports: [
@@ -21,6 +23,7 @@ import { EspacioFisicoModule } from './modules/espacio-fisico/espacio-fisico.mod
     CategoriaItemModule,
     ItemModule,
     CategoriaActividadModule,
+    ActividadModule,
     AlmacenamientoModule,
     PrismaModule,
     EspacioFisicoModule,

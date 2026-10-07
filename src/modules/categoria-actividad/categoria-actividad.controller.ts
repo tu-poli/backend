@@ -17,7 +17,7 @@ import { UpdateCategoriaActividadDto } from "./dto/update-categoria-actividad.dt
 import { QueryCategoriaActividadDto } from "./dto/query-categoria-actividad.dto";
 
 @ApiTags("Actividades - Categorías")
-@Controller(["actividades/categorias", "categoria-actividad"])
+@Controller("actividades/categorias")
 export class CategoriaActividadController {
   constructor(
     private readonly categoriaActividadService: CategoriaActividadService,
