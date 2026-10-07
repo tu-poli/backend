@@ -13,7 +13,7 @@ export class CreateCategoriaActividadDto {
   @ApiProperty({
     example: "Deportes",
     description:
-      "Nombre de la categoría (sin símbolos, únicamente letras o números)",
+      "Nombre de la categoría (únicamente letras, sin espacios en el medio, números ni caracteres especiales)",
   })
 
   // Class Validator & Transformer
@@ -24,9 +24,9 @@ export class CreateCategoriaActividadDto {
   @MaxLength(255, {
     message: "El campo nombre no puede exceder los 255 caracteres",
   })
-  @Matches(/^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s]+$/, {
+  @Matches(/^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\-\.,]+$/, {
     message:
-      "El campo nombre no debe contener símbolos, únicamente letras o números",
+      "El campo contiene caracteres no permitidos. Solo se permiten letras, números, espacios y puntuación básica como guiones o puntos.",
   })
 
   // Atributos
