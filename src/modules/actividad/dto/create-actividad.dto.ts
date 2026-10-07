@@ -14,7 +14,8 @@ import {
 export class CreateActividadDto {
   @ApiProperty({
     example: "Taller de Fútbol Infantil",
-    description: "Nombre de la actividad (sin símbolos extraños ni espacios múltiples)",
+    description:
+      "Nombre de la actividad (sin símbolos extraños ni espacios múltiples)",
   })
   // Elimina espacios múltiples (ej. "Taller   de    Fútbol" -> "Taller de Fútbol") y hace trim.
   @Transform(({ value }) =>

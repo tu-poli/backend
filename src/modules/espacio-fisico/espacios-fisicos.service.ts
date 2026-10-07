@@ -1,7 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
-import { CreateEspacioFisicoDto } from './dto/create-espacio-fisico.dto';
-import { UpdateEspacioFisicoDto } from './dto/update-espacio-fisico.dto';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.service";
+import { CreateEspacioFisicoDto } from "./dto/create-espacio-fisico.dto";
+import { UpdateEspacioFisicoDto } from "./dto/update-espacio-fisico.dto";
 
 @Injectable()
 export class EspaciosFisicosService {
@@ -20,7 +20,7 @@ export class EspaciosFisicosService {
 
   async findAll() {
     const espacios = await this.prisma.espacioFisico.findMany();
-    return espacios.map(espacio => this.mapToDto(espacio));
+    return espacios.map((espacio) => this.mapToDto(espacio));
   }
 
   async findOne(id: number) {
@@ -39,8 +39,10 @@ export class EspaciosFisicosService {
     await this.findOne(id); // verifica si existe
 
     const data: any = {};
-    if (updateEspacioFisicoDto.nombre !== undefined) data.nombre = updateEspacioFisicoDto.nombre;
-    if (updateEspacioFisicoDto.descripcion !== undefined) data.descripcion = updateEspacioFisicoDto.descripcion;
+    if (updateEspacioFisicoDto.nombre !== undefined)
+      data.nombre = updateEspacioFisicoDto.nombre;
+    if (updateEspacioFisicoDto.descripcion !== undefined)
+      data.descripcion = updateEspacioFisicoDto.descripcion;
 
     const espacioActualizado = await this.prisma.espacioFisico.update({
       where: { id_espacio: id },
