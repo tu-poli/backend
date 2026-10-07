@@ -24,15 +24,9 @@ export class CreateCategoriaActividadDto {
   @MaxLength(255, {
     message: "El campo nombre no puede exceder los 255 caracteres",
   })
-  @Matches(/^\S+$/, {
-    message: "El campo nombre no debe tener espacios en el medio",
-  })
-  @Matches(/^[^0-9]+$/, {
-    message: "El campo nombre no debe contener números",
-  })
-  @Matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ]+$/, {
+  @Matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ][a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9]*(?: [a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9]+)*$/, {
     message:
-      "El campo nombre solo debe contener letras, sin caracteres especiales",
+      "El campo nombre debe comenzar con una letra, puede contener números y solo permite un espacio entre palabras (sin caracteres especiales)",
   })
 
   // Atributos

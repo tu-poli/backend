@@ -15,8 +15,8 @@ export class CreateCategoriaItemDto {
   @IsNotEmpty({ message: 'El campo nombre no puede estar vacío' })
   @MinLength(2, { message: 'El campo nombre debe tener al menos 2 caracteres' })
   @MaxLength(255, { message: 'El campo nombre no puede exceder los 255 caracteres' })
-  @Matches(/^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s]+$/, {
-    message: 'El campo nombre no debe contener símbolos, únicamente letras o números',
+  @Matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ][a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9]*(?: [a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9]+)*$/, {
+    message: 'El campo nombre debe comenzar con una letra, puede contener números y solo permite un espacio entre palabras (sin caracteres especiales)',
   })
 
   // Atributos 
