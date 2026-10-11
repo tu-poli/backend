@@ -106,9 +106,15 @@ async function main() {
   // ------------------------------------------------------------------
   console.log('6️⃣  Creando categorías de inventario...');
   const [catInvAlimento, catInvClase, catInvDeporte] = await Promise.all([
-    prisma.categoriaInventario.create({ data: { nombre: 'Alimento' } }),
-    prisma.categoriaInventario.create({ data: { nombre: 'Clase' } }),
-    prisma.categoriaInventario.create({ data: { nombre: 'Deporte' } }),
+    prisma.categoriaInventario.create({
+      data: { nombre: 'Alimento', color: '#F59E0B', icono: 'utensils' },
+    }),
+    prisma.categoriaInventario.create({
+      data: { nombre: 'Clase', color: '#3B82F6', icono: 'book' },
+    }),
+    prisma.categoriaInventario.create({
+      data: { nombre: 'Deporte', color: '#10B981', icono: 'trophy' },
+    }),
   ]);
   console.log(`   ✔ Alimento, Clase, Deporte\n`);
 
@@ -292,6 +298,7 @@ async function main() {
         nombre: 'Pelota de Futbol',
         cantidad: 10,
         id_categoria: catInvDeporte.id_categoria,
+        lote: 'LOTE-2024/01#DEP',
       },
     }),
     prisma.item.create({
@@ -299,6 +306,7 @@ async function main() {
         nombre: 'Colchoneta',
         cantidad: 20,
         id_categoria: catInvClase.id_categoria,
+        lote: 'LOTE-2024/02#CLA',
       },
     }),
   ]);

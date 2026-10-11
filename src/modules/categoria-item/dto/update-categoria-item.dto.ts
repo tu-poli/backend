@@ -4,3 +4,5 @@ import { CreateCategoriaItemDto } from "./create-categoria-item.dto";
 export class UpdateCategoriaItemDto extends PartialType(
   CreateCategoriaItemDto,
 ) {}
+
+export class ActualizarCategoriaItemDto extends UpdateCategoriaItemDto {}

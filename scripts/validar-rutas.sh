@@ -164,7 +164,7 @@ echo ""
 echo -e "${BOLD}${YELLOW}[3/5] Validando Módulo Categorías de Inventario${NC}"
 
 # 3.1 Crear categoría de inventario (solo letras, números y espacios según regex)
-run_test "POST" "/inventario/categorias" "201" "{\"nombre\":\"TestItemCat $TIMESTAMP\"}" "Crear categoría de inventario"
+run_test "POST" "/inventario/categorias" "201" "{\"nombre\":\"TestItemCat $TIMESTAMP\",\"color\":\"#10B981\",\"icono\":\"trophy\"}" "Crear categoría de inventario con color e icono"
 
 CAT_ITEM_ID=""
 if command -v jq >/dev/null 2>&1; then
@@ -184,7 +184,7 @@ if [ -n "$CAT_ITEM_ID" ] && [ "$CAT_ITEM_ID" != "null" ]; then
   run_test "GET" "/inventario/categorias/$CAT_ITEM_ID" "200" "" "Obtener categoría de inventario por ID"
 
   # 3.5 Actualizar (PATCH)
-  run_test "PATCH" "/inventario/categorias/$CAT_ITEM_ID" "200" "{\"nombre\":\"TestItemCat Editada $TIMESTAMP\"}" "Actualizar categoría de inventario (PATCH)"
+  run_test "PATCH" "/inventario/categorias/$CAT_ITEM_ID" "200" "{\"nombre\":\"TestItemCat Editada $TIMESTAMP\",\"color\":\"#059669\",\"icono\":\"shield\"}" "Actualizar categoría de inventario (PATCH)"
 else
   echo -e "  ${RED}✖ No se pudo crear la categoría de inventario necesaria para las pruebas siguientes${NC}"
 fi
@@ -199,7 +199,7 @@ echo -e "${BOLD}${YELLOW}[4/5] Validando Módulo Ítems de Inventario${NC}"
 ITEM_ID=""
 if [ -n "$CAT_ITEM_ID" ] && [ "$CAT_ITEM_ID" != "null" ]; then
   # 4.1 Crear un ítem vinculado a la categoría creada
-  run_test "POST" "/items" "201" "{\"elemento\":\"Pelota Test $TIMESTAMP\",\"categoriaId\":$CAT_ITEM_ID,\"cantidad\":12}" "Crear ítem de inventario asociado a categoría"
+  run_test "POST" "/items" "201" "{\"elemento\":\"Pelota Test $TIMESTAMP\",\"categoriaId\":$CAT_ITEM_ID,\"cantidad\":12,\"lote\":\"LOTE-2024/09#TEST\"}" "Crear ítem de inventario asociado a categoría con lote"
 
   if command -v jq >/dev/null 2>&1; then
     ITEM_ID=$(echo "$LAST_BODY" | jq -r '.id // empty')
@@ -221,7 +221,7 @@ if [ -n "$CAT_ITEM_ID" ] && [ "$CAT_ITEM_ID" != "null" ]; then
     run_test "GET" "/items/$ITEM_ID" "200" "" "Obtener ítem por ID"
 
     # 4.6 Actualizar ítem (PATCH)
-    run_test "PATCH" "/items/$ITEM_ID" "200" "{\"elemento\":\"Pelota Test Editada\",\"categoriaId\":$CAT_ITEM_ID,\"cantidad\":15}" "Actualizar ítem (PATCH)"
+    run_test "PATCH" "/items/$ITEM_ID" "200" "{\"elemento\":\"Pelota Test Editada\",\"categoriaId\":$CAT_ITEM_ID,\"cantidad\":15,\"lote\":\"LOTE-2024/10#MOD\"}" "Actualizar ítem y lote (PATCH)"
 
     # 4.7 Eliminar ítem
     run_test "DELETE" "/items/$ITEM_ID" "200,204" "" "Eliminar ítem por ID"

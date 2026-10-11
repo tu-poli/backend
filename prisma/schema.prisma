@@ -163,18 +163,21 @@ model Inscripcion {
 // ============================================================
 
 model CategoriaInventario {
-  id_categoria Int    @id @default(autoincrement())
-  nombre       String @db.VarChar(255)
+  id_categoria Int     @id @default(autoincrement())
+  nombre       String  @db.VarChar(255)
+  color        String? @db.VarChar(50)
+  icono        String? @db.VarChar(50)
   items        Item[]
 
   @@map("categoria_inventario")
 }
 
 model Item {
-  id_item      Int    @id @default(autoincrement())
-  nombre       String @db.VarChar(255)
-  cantidad     Int    @default(0)
+  id_item      Int                  @id @default(autoincrement())
+  nombre       String               @db.VarChar(255)
+  cantidad     Int                  @default(0)
   id_categoria Int?
+  lote         String?              @db.VarChar(100)
 
   categoria     CategoriaInventario? @relation(fields: [id_categoria], references: [id_categoria])
   reserva_items ReservaItem[]

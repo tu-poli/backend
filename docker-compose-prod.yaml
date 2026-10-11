@@ -41,6 +41,7 @@ services:
       PORT: ${PORT:-3000}
       # Dentro de la red interna de Docker, la API debe conectarse directamente al host del contenedor PostgreSQL (tupoli_db:5432)
       DATABASE_URL: postgresql://${DB_USER:-tupoli_user}:${DB_PASSWORD:-tupoli_password}@${DB_HOST:-tupoli_db}:5432/${DB_NAME:-tupoli_db}?schema=public
+      DIRECT_URL: postgresql://${DB_USER:-tupoli_user}:${DB_PASSWORD:-tupoli_password}@${DB_HOST:-tupoli_db}:5432/${DB_NAME:-tupoli_db}?schema=public
       RUN_SEEDS: ${RUN_SEEDS:-true}
       JWT_SECRET: ${JWT_SECRET:-super_secret_jwt_key_change_me}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-1d}

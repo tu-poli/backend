@@ -96,8 +96,10 @@
   ```json
   [
     {
-      "id": 1,
-      "nombre": "Deportes"
+      "id_categoria": 1,
+      "nombre": "Deportes",
+      "color": "#10B981",
+      "icono": "trophy"
     }
   ]
   ```
@@ -106,29 +108,37 @@
 - **Body:**
   ```json
   {
-    "nombre": "Alimentos"
+    "nombre": "Alimentos",
+    "color": "#F59E0B",
+    "icono": "utensils"
   }
   ```
 - **Response (201 Created):**
   ```json
   {
-    "id": 2,
-    "nombre": "Alimentos"
+    "id_categoria": 2,
+    "nombre": "Alimentos",
+    "color": "#F59E0B",
+    "icono": "utensils"
   }
   ```
 
-#### `PUT /inventario/categorias/:id`
+#### `PUT /inventario/categorias/:id` o `PATCH /inventario/categorias/:id`
 - **Body:**
   ```json
   {
-    "nombre": "Deportes de Contacto"
+    "nombre": "Deportes de Contacto",
+    "color": "#059669",
+    "icono": "shield"
   }
   ```
 - **Response (200 OK):**
   ```json
   {
-    "id": 1,
-    "nombre": "Deportes de Contacto"
+    "id_categoria": 1,
+    "nombre": "Deportes de Contacto",
+    "color": "#059669",
+    "icono": "shield"
   }
   ```
 
@@ -150,9 +160,12 @@
       "categoriaId": 1,
       "categoria": {
         "id": 1,
-        "nombre": "Deportes"
+        "nombre": "Deportes",
+        "color": "#10B981",
+        "icono": "trophy"
       },
-      "cantidad": 10
+      "cantidad": 10,
+      "lote": "LOTE-2024/01#DEP"
     }
   ]
   ```
@@ -163,7 +176,8 @@
   {
     "elemento": "Pelota de Básquet",
     "categoriaId": 1,
-    "cantidad": 10
+    "cantidad": 10,
+    "lote": "LOTE-2024/01#DEP"
   }
   ```
 - **Response (201 Created):**
@@ -172,17 +186,19 @@
     "id": 1,
     "elemento": "Pelota de Básquet",
     "categoriaId": 1,
-    "cantidad": 10
+    "cantidad": 10,
+    "lote": "LOTE-2024/01#DEP"
   }
   ```
 
-#### `PUT /inventario/items/:id`
+#### `PUT /inventario/items/:id` o `PATCH /inventario/items/:id`
 - **Body:**
   ```json
   {
     "elemento": "Pelota de Básquet Oficial",
     "categoriaId": 1,
-    "cantidad": 15
+    "cantidad": 15,
+    "lote": "LOTE-2024/02#DEP"
   }
   ```
 - **Response (200 OK):**
@@ -193,9 +209,12 @@
     "categoriaId": 1,
     "categoria": {
       "id": 1,
-      "nombre": "Deportes"
+      "nombre": "Deportes",
+      "color": "#10B981",
+      "icono": "trophy"
     },
-    "cantidad": 15
+    "cantidad": 15,
+    "lote": "LOTE-2024/02#DEP"
   }
   ```
 
