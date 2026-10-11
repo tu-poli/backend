@@ -33,7 +33,7 @@ export class CategoriaActividadService {
 
     const term = nombre.trim();
 
-    // En MySQL, los campos de texto con collation _ci buscan sin discriminar mayúsculas/minúsculas
+    // Buscar categorías coincidentes por término
     const resultados = await this.prisma.categoriaActividad.findMany({
       where: {
         nombre: {

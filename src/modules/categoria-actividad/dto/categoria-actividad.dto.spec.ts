@@ -30,31 +30,15 @@ describe("CategoriaActividad DTO Validations", () => {
       expect(dto.nombre).toBe("Futbol");
     });
 
-    it("debe rechazar nombres con espacios en el medio", async () => {
+    it("debe aceptar nombres con espacios y números permitidos", async () => {
       const dto = plainToInstance(CreateCategoriaActividadDto, {
-        nombre: "Fut bol",
+        nombre: "Futbol 5",
       });
       const errors = await validate(dto);
-      expect(errors.length).toBeGreaterThan(0);
-      const constraints = errors[0].constraints;
-      expect(JSON.stringify(constraints)).toContain(
-        "El campo nombre no debe tener espacios en el medio",
-      );
+      expect(errors.length).toBe(0);
     });
 
-    it("debe rechazar nombres que contengan números", async () => {
-      const dto = plainToInstance(CreateCategoriaActividadDto, {
-        nombre: "Futbol123",
-      });
-      const errors = await validate(dto);
-      expect(errors.length).toBeGreaterThan(0);
-      const constraints = errors[0].constraints;
-      expect(JSON.stringify(constraints)).toContain(
-        "El campo nombre no debe contener números",
-      );
-    });
-
-    it("debe rechazar nombres con caracteres especiales o símbolos", async () => {
+    it("debe rechazar nombres con caracteres especiales o símbolos no permitidos", async () => {
       const dto = plainToInstance(CreateCategoriaActividadDto, {
         nombre: "Deporte!",
       });
@@ -62,7 +46,7 @@ describe("CategoriaActividad DTO Validations", () => {
       expect(errors.length).toBeGreaterThan(0);
       const constraints = errors[0].constraints;
       expect(JSON.stringify(constraints)).toContain(
-        "El campo nombre solo debe contener letras, sin caracteres especiales",
+        "El campo contiene caracteres no permitidos. Solo se permiten letras, números, espacios y puntuación básica como guiones o puntos.",
       );
     });
 

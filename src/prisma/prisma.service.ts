@@ -21,7 +21,7 @@ export class PrismaService
       );
     } catch (error) {
       this.logger.warn(
-        `Aviso: No se pudo conectar a la base de datos MySQL (${(error as Error).message}). El backend continuará corriendo.`,
+        `Aviso: No se pudo conectar a la base de datos PostgreSQL (${(error as Error).message}). El backend continuará corriendo.`,
       );
     }
   }

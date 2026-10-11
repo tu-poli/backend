@@ -40,14 +40,24 @@ export class AlmacenamientoService {
       this.logger.warn(
         "Aviso: Supabase Storage no cuenta con SUPABASE_URL o SUPABASE_SECRET_KEY/SUPABASE_KEY configuradas. Las operaciones de almacenamiento fallarán hasta que se definan en las variables de entorno.",
       );
+      this.clienteSupabase = null as any;
+    } else {
+      this.clienteSupabase = createClient(url, clave, {
+        auth: {
+          persistSession: false,
+          autoRefreshToken: false,
+        },
+      });
     }
+  }
 
-    this.clienteSupabase = createClient(url, clave, {
-      auth: {
-        persistSession: false,
-        autoRefreshToken: false,
-      },
-    });
+  private obtenerCliente(): SupabaseClient {
+    if (!this.clienteSupabase) {
+      throw new InternalServerErrorException(
+        "Supabase Storage no está configurado. Verifique las variables de entorno SUPABASE_URL y SUPABASE_SECRET_KEY.",
+      );
+    }
+    return this.clienteSupabase;
   }
 
   /**
@@ -79,8 +89,8 @@ export class AlmacenamientoService {
   ): Promise<{ ruta: string; urlPublica: string }> {
     const rutaSegura = this.sanitizarRuta(rutaDestino);
 
-    const { data, error } = await this.clienteSupabase.storage
-      .from(bucket)
+    const { data, error } = await this.obtenerCliente()
+      .storage.from(bucket)
       .upload(rutaSegura, archivo.buffer, {
         contentType: archivo.mimetype,
         upsert: true,
@@ -96,8 +106,8 @@ export class AlmacenamientoService {
       );
     }
 
-    const { data: dataUrl } = this.clienteSupabase.storage
-      .from(bucket)
+    const { data: dataUrl } = this.obtenerCliente()
+      .storage.from(bucket)
       .getPublicUrl(data.path);
 
     return {
@@ -138,8 +148,8 @@ export class AlmacenamientoService {
     bucket:
       BucketAlmacenamiento | string = BucketAlmacenamiento.DOCUMENTACION_MEDICA,
   ): string {
-    const { data } = this.clienteSupabase.storage
-      .from(bucket)
+    const { data } = this.obtenerCliente()
+      .storage.from(bucket)
       .getPublicUrl(ruta);
     return data.publicUrl;
   }
@@ -156,8 +166,8 @@ export class AlmacenamientoService {
     bucket:
       BucketAlmacenamiento | string = BucketAlmacenamiento.DOCUMENTACION_MEDICA,
   ): Promise<string> {
-    const { data, error } = await this.clienteSupabase.storage
-      .from(bucket)
+    const { data, error } = await this.obtenerCliente()
+      .storage.from(bucket)
       .createSignedUrl(ruta, segundosExpiracion);
 
     if (error) {
@@ -181,8 +191,8 @@ export class AlmacenamientoService {
     bucket:
       BucketAlmacenamiento | string = BucketAlmacenamiento.DOCUMENTACION_MEDICA,
   ): Promise<void> {
-    const { error } = await this.clienteSupabase.storage
-      .from(bucket)
+    const { error } = await this.obtenerCliente()
+      .storage.from(bucket)
       .remove([ruta]);
 
     if (error) {

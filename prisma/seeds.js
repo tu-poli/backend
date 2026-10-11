@@ -24,7 +24,6 @@ async function main() {
   // Limpiar en orden inverso a las FK (para poder re-ejecutar el seed)
   // ------------------------------------------------------------------
   console.log('🧹 Limpiando datos existentes...');
-  await prisma.$executeRaw`SET FOREIGN_KEY_CHECKS=0`;
   await prisma.inscripcion.deleteMany();
   await prisma.menor.deleteMany();
   await prisma.reservaItem.deleteMany();
@@ -38,7 +37,6 @@ async function main() {
   await prisma.estadoReserva.deleteMany();
   await prisma.estadoInscripcion.deleteMany();
   await prisma.rol.deleteMany();
-  await prisma.$executeRaw`SET FOREIGN_KEY_CHECKS=1`;
   console.log('   ✔ Limpieza completa\n');
 
   // ------------------------------------------------------------------

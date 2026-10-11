@@ -39,6 +39,7 @@ out/
 # Docker database data
 mariadb_data/
 mysql_data/
+postgres_data/
 
 # Coverage / Tests
 coverage/
@@ -50,6 +51,4 @@ coverage/
 .eslintcache
 .turbo
 
-
-AGENTS.md
 FEATURE*.md

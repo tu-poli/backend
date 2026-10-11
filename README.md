@@ -1,6 +1,6 @@
 # Backend — TuPoli API
 
-API REST construida con **NestJS**, **Prisma** y **MySQL** para la gestión del polideportivo TuPoli.
+API REST construida con **NestJS**, **Prisma** y **PostgreSQL** para la gestión del polideportivo TuPoli.
 
 ---
 
@@ -39,7 +39,7 @@ cp .env.example .env
 
 Asegurate de que `DATABASE_URL` apunte a `localhost` con el puerto mapeado del contenedor, y configurá las credenciales de Supabase Storage si vas a trabajar con carga de documentación médica y autorizaciones:
 ```env
-DATABASE_URL="mysql://tupoli_user:tupoli_password@localhost:33306/tupoli_db"
+DATABASE_URL="postgresql://tupoli_user:tupoli_password@localhost:5432/tupoli_db?schema=public"
 
 # Supabase Storage (Manejo de documentos y autorizaciones de menores)
 SUPABASE_URL="https://<tu-proyecto>.supabase.co"
@@ -50,9 +50,9 @@ SUPABASE_BUCKET_AUTORIZACIONES="autorizaciones"
 
 ### 2. Levantar la Base de Datos con Docker
 ```bash
-docker compose -f docker-compose-prod.yaml up -d
+docker compose -f docker-compose-dev.yaml up -d
 ```
-> Esto levanta solo el contenedor de MySQL. La API **no** corre en Docker.
+> Esto levanta solo el contenedor de PostgreSQL. La API **no** corre en Docker.
 
 ### 3. Instalar dependencias
 ```bash
@@ -82,18 +82,16 @@ Una vez levantado el servidor:
 ---
 
 ## 🧪 Pruebas Rápidas de API (Scripts)
-Se incluye un script para verificar el correcto funcionamiento del CRUD de categorías:
+Se incluyen scripts para verificar el correcto funcionamiento de los endpoints:
 ```bash
-./scripts/test-categoria-item.sh
+# Validar todas las rutas
+bash scripts/validar-rutas.sh
+bash scripts/deploy.sh 
 ```
-
-Al arrancar, el contenedor de la API aplica automáticamente las migraciones pendientes (`prisma migrate deploy`) antes de iniciar NestJS. No es necesario correr nada manualmente.
-
-> Asegurate de tener un `.env` con valores de producción antes de ejecutar este comando.
 
 ---
 
-## 📦 Levantar el stack para pruebas (Frontend ↔ API)
+## 📦 Levantar el stack completo para pruebas (Frontend ↔ API)
 
 Este es el flujo recomendado para que los devs de Frontend levanten la API junto a la base de datos usando Docker Compose, **evitando cache, código viejo y conflictos de contenedores**.
 
@@ -103,7 +101,7 @@ Este es el flujo recomendado para que los devs de Frontend levanten la API junto
 ```bash
 sudo docker compose -f docker-compose-prod.yaml down --volumes --remove-orphans
 ```
-> Esto elimina los contenedores, la red y el **volumen de MySQL** (datos incluidos). La próxima vez que levante, el seed corre desde cero.
+> Esto elimina los contenedores, la red y el **volumen de PostgreSQL** (datos incluidos). La próxima vez que levante, el seed corre desde cero.
 
 **2. Reconstruir la imagen y levantar:**
 ```bash
@@ -135,7 +133,7 @@ Una vez levantado:
 ```bash
 sudo docker compose -f docker-compose-prod.yaml down
 ```
-> Sin `--volumes` conserva los datos de MySQL para la próxima sesión.
+> Sin `--volumes` conserva los datos de PostgreSQL para la próxima sesión.
 
 ---
 

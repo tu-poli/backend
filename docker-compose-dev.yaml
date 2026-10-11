@@ -1,24 +1,23 @@
 services:
-  mysql:
-    image: mysql:8.0
+  postgres:
+    image: postgres:16-alpine
     container_name: ${DB_HOST:-tupoli_db}
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-tupoli_root_secret}
-      MYSQL_DATABASE: ${DB_NAME:-tupoli_db}
-      MYSQL_USER: ${DB_USER:-tupoli_user}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-tupoli_password}
+      POSTGRES_DB: ${DB_NAME:-tupoli_db}
+      POSTGRES_USER: ${DB_USER:-tupoli_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-tupoli_password}
     ports:
-      - "${DB_PORT:-33306}:3306"
+      - "${DB_PORT:-5432}:5432"
     volumes:
-      - mysql_dev_data:/var/lib/mysql
+      - postgres_dev_data:/var/lib/postgresql/data
       # Scripts en este directorio se ejecutan automáticamente al crear el contenedor por primera vez
-      - ./docker/mysql-init:/docker-entrypoint-initdb.d:ro
+      - ./docker/postgres-init:/docker-entrypoint-initdb.d:ro
     networks:
       - tupoli_dev_network
 
 volumes:
-  mysql_dev_data:
+  postgres_dev_data:
     driver: local
 
 networks:
