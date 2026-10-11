@@ -299,6 +299,7 @@ async function main() {
         cantidad: 10,
         id_categoria: catInvDeporte.id_categoria,
         lote: 'LOTE-2024/01#DEP',
+        stock_minimo: 5,
       },
     }),
     prisma.item.create({
@@ -307,6 +308,7 @@ async function main() {
         cantidad: 20,
         id_categoria: catInvClase.id_categoria,
         lote: 'LOTE-2024/02#CLA',
+        stock_minimo: 2,
       },
     }),
   ]);

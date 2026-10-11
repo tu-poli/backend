@@ -165,7 +165,8 @@
         "icono": "trophy"
       },
       "cantidad": 10,
-      "lote": "LOTE-2024/01#DEP"
+      "lote": "LOTE-2024/01#DEP",
+      "stockMinimo": 5
     }
   ]
   ```
@@ -177,7 +178,8 @@
     "elemento": "Pelota de Básquet",
     "categoriaId": 1,
     "cantidad": 10,
-    "lote": "LOTE-2024/01#DEP"
+    "lote": "LOTE-2024/01#DEP",
+    "stockMinimo": 5
   }
   ```
 - **Response (201 Created):**
@@ -187,7 +189,8 @@
     "elemento": "Pelota de Básquet",
     "categoriaId": 1,
     "cantidad": 10,
-    "lote": "LOTE-2024/01#DEP"
+    "lote": "LOTE-2024/01#DEP",
+    "stockMinimo": 5
   }
   ```
 
@@ -198,7 +201,8 @@
     "elemento": "Pelota de Básquet Oficial",
     "categoriaId": 1,
     "cantidad": 15,
-    "lote": "LOTE-2024/02#DEP"
+    "lote": "LOTE-2024/02#DEP",
+    "stockMinimo": 8
   }
   ```
 - **Response (200 OK):**
@@ -214,7 +218,8 @@
       "icono": "trophy"
     },
     "cantidad": 15,
-    "lote": "LOTE-2024/02#DEP"
+    "lote": "LOTE-2024/02#DEP",
+    "stockMinimo": 8
   }
   ```
 

@@ -51,6 +51,22 @@ export class CreateItemDto {
       "El campo lote contiene caracteres no permitidos. Se permiten letras, números, espacios y símbolos de loteo como guiones (-), guiones bajos (_), barras (/ o \\), numeral (#), dos puntos (:) y puntos (.)",
   })
   lote?: string;
+
+  @ApiPropertyOptional({
+    example: 5,
+    description:
+      "Stock mínimo requerido para el ítem (opcional, por defecto 0)",
+    minimum: 0,
+    default: 0,
+  })
+  @Transform(({ value, obj }) => {
+    const val = value !== undefined ? value : obj?.stock_minimo;
+    return val === null ? 0 : val;
+  })
+  @IsOptional()
+  @IsNumber({}, { message: "El campo stockMinimo debe ser un número" })
+  @Min(0, { message: "El campo stockMinimo no puede ser menor a 0" })
+  stockMinimo?: number;
 }
 
 export class CrearItemDto extends CreateItemDto {}

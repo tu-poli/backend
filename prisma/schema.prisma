@@ -178,6 +178,7 @@ model Item {
   cantidad     Int                  @default(0)
   id_categoria Int?
   lote         String?              @db.VarChar(100)
+  stock_minimo Int                  @default(0)
 
   categoria     CategoriaInventario? @relation(fields: [id_categoria], references: [id_categoria])
   reserva_items ReservaItem[]

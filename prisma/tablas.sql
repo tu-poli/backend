@@ -94,7 +94,8 @@ CREATE TABLE "item" (
     "nombre"        VARCHAR(255) NOT NULL,
     "cantidad"      INT NOT NULL DEFAULT 0,
     "id_categoria"  INT REFERENCES "categoria_inventario"("id_categoria"),
-    "lote"          VARCHAR(100)
+    "lote"          VARCHAR(100),
+    "stock_minimo"  INT NOT NULL DEFAULT 0
 );
 
 CREATE TABLE "reserva_item" (

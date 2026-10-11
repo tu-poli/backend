@@ -8,7 +8,8 @@ export class ItemsService {
   constructor(private prisma: PrismaService) {}
 
   async create(createItemDto: CreateItemDto) {
-    const { elemento, categoriaId, cantidad, lote } = createItemDto;
+    const { elemento, categoriaId, cantidad, lote, stockMinimo } =
+      createItemDto;
 
     const categoryExists = await this.prisma.categoriaInventario.findUnique({
       where: { id_categoria: categoriaId },
@@ -25,6 +26,7 @@ export class ItemsService {
         id_categoria: categoriaId,
         cantidad: cantidad,
         lote: lote,
+        stock_minimo: stockMinimo ?? 0,
       },
     });
 
@@ -71,6 +73,8 @@ export class ItemsService {
     if (updateItemDto.cantidad !== undefined)
       data.cantidad = updateItemDto.cantidad;
     if (updateItemDto.lote !== undefined) data.lote = updateItemDto.lote;
+    if (updateItemDto.stockMinimo !== undefined)
+      data.stock_minimo = updateItemDto.stockMinimo ?? 0;
 
     if (updateItemDto.categoriaId !== undefined) {
       const categoryExists = await this.prisma.categoriaInventario.findUnique({
@@ -108,6 +112,7 @@ export class ItemsService {
       categoriaId: item.id_categoria,
       cantidad: item.cantidad,
       lote: item.lote,
+      stockMinimo: item.stock_minimo,
     };
   }
 
@@ -126,6 +131,7 @@ export class ItemsService {
         : null,
       cantidad: item.cantidad,
       lote: item.lote,
+      stockMinimo: item.stock_minimo,
     };
   }
 }
